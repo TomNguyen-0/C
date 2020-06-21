@@ -1,0 +1,29 @@
+(load "~cs320/Scheme/simply.scm")
+
+
+ 
+(DEFINE (thirds a_lis1)
+	(COND
+		((NOT (LIST? a_lis1)) (DISPLAY "USAGE: (thirds [list])\nTry again."))
+		((NULL? a_lis1) '())
+		(ELSE (CONS (CAR a_lis1) (thirds (drop a_lis1 3))))
+	
+	)
+	)
+
+(DEFINE (drop b_lis1 n)
+	(COND
+		((NULL? b_lis1) '())
+		((ZERO? N) CDDDR b_lis1)
+		(ELSE (drop (CDR b_lis1) (- n 1)))
+	)
+)
+
+
+
+
+(ELSE (CONS (CAR a_lis1) (thirds (drop(CDR a_lis1) 3))))
+(CONS (CAR '(a b c d) (drop(CDR '(a b c d) 2))))
+
+(condition-case some-unbound-variable ((exn file) (print "ignored")) )
+(if (not (LIST? a_lis1)) (display "USAGE: (thirds [list])")

@@ -1,0 +1,21 @@
+#!/bin/csh -f
+# CS320 - Assignment 4
+# Student: Tom Nguyen
+# Professor: Dr. John Carroll
+# username: CSSC0155@edoras.sdsu.edu
+# April 07, 2017
+# File: scriptp1
+# Note: It will delete all non-ASCII characters 128 to 255, change the case
+# of alphabetic characters, 'fold' long lines, and make browser-friendly
+# adjustments to the characters _, /, :, ?, &, and space to %5F, %2F, %3A, %3F, %26, and %20 
+# Program 1 in UNIX_pipes; reads from stdin, so run with: scriptp1< inputfile >! filename
+# constants used: lower: a-z , upper: A-Z, '\200': character 128 in octal, '\377': character 255, and w20: 20 spaces for fold.
+# Steps and descriptions:
+# steps: 1. changes lower case to upper case letters and vice versa.
+# steps: 2. deltes any ASCII characters 128 to 255
+# steps: 3-6: changing characters  _, /, :, ?, &, and space to to %5F, %2F, %3A, %3F, %26, and %20 
+# steps: 7: limit the folding to 20 characters in space.
+# The return value is: 0 when successfully executed otherwise returns 1
+# unexpected behavior: does not properly handle tabs.
+
+tr '[:lower:][:upper:]' '[:upper:][:lower:]' | tr -d '\200'-'\377' | sed 's/[/]/%2F/g'|  sed 's/[_]/%5F/g' | sed 's/[?]/%3F/g' | sed 's/[:]/%3A/g' | sed 's/[&]/%26/g' |  sed 's/[ ]/%20/g' | fold -w20

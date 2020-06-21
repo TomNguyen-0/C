@@ -1,0 +1,96 @@
+(load "~cs320/Scheme/simply.scm")
+(DEFINE (RSWAP r_lis)
+	(COND
+		((NOT(LIST? r_lis)) (DISPLAY "USAGE: (rswap [list])\nTry again."))
+		((NULL? r_lis) '())
+		(ELSE (CONS (SWAP (CADR r_lis)) (CONS (SWAP (CAR r_lis)) (RSWAP (CDDR r_lis)) )))
+	)
+)
+
+(rswap '(a))
+(rswap '(a b))
+(rswap '((a b)))
+(rswap '((a b) (c d)))
+(rswap '((h i) (j k) l (m n o)))
+(rswap '((h i) (j k) (l m) (n o)))
+(rswap '((a b) c (d (e f)) g (h i)))
+(rswap '((d (e f)) g))
+(rswap list1)
+(rswap list2)
+(rswap list3)
+(rswap list4)
+(rswap list5)
+(rswap list6)
+
+(aOnly '((h i) (j k) l (m n o)))
+(append '((h i) (j k) l (m n o)))
+(pair? '((a b c)))
+
+(when transfering the file you dont need to delete and vim p3.scm)
+chmod 700 p3.scm
+scheme -load p3.scm
+
+rm test.scm
+vim test.scm
+chmod 700 test.scm
+scheme -load test.scm
+
+(aOnly '((h i) (j k) l (m n o)))
+(append(append '((h i) (j k) l (m n o))))
+(append '(a (a b)))
+(append '((a b) (c d e)))
+(caar '((a b) (c d e)))
+(num_items '((h i) (j k) l (m n o)))
+
+(map list '(1 2 3 4))
+(map list '((h i) (j k) l (m n o)))
+(CAR (CAAR '((h i) (j k) l (m n o))))
+(count '(a b c d))
+
+(evenatom '())
+(evenatom '(a))
+(evenatom (LIST 'a 'b 'c 'd 'e 'f 'g))
+(evenatom '((h i) (j k) l (m n o)))
+(evenatom '((a b c) (d e)))
+(evenatom 'a)
+(evenatom 3)
+
+(swap '(a b))
+(swap '(a b c))
+(swap '(a b c d e f g))
+(swap (LIST 's 't 'u 'v 'w 'x 'y 'z))
+(swap '((h i) (j k) l (m n o)))
+(swap '())
+(swap '(a))
+(swap 3)
+(swap 'a)
+
+(thirds '(s t u v w x y z))
+(thirds '((a b) c (d e f) g (h i)) )
+(thirds '())
+(thirds (LIST 's 't 'u 'v 'w 'x 'y 'z))
+(thirds 3)
+(thirds 'a)
+
+extra credit:
+(thirds '(a) '(c) '(g))
+(swap '(a) '(c) '(g))
+(evenatom '(e) '(f) '(g))
+
+rm p3.scm
+vim p3.scm
+
+
+(NOT (LIST? 3)) 
+(list? (car '((a b) c)))
+
+(drop '(a) 2)
+(drop '(a b) 2)
+(drop '(a b c) 2)
+(drop '(a b c d e) 3)
+(drop '(a b c d e f) 4)
+
+(CONS (CAR '(a b c d) (drop(CDR '(a b c d) 2)))
+(CONS '(A B) '(G))
+
+cp ~cs320/p3.scm ~/Three/p3.scm

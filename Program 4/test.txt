@@ -1,0 +1,119 @@
+cp ~cs320/Data1/input1 ~/Four/input1
+cp ~cs320/Data1/input2 ~/Four/input2
+cp ~cs320/Data1/input3 ~/Four/input3
+cp ~cs320/Data1/input4 ~/Four/input4
+cp ~cs320/Data1/input5 ~/Four/input5
+
+gcc -o p4 p4.c
+p4 < ~cs320/Data1/input1
+p4 < ~cs320/Data1/input6
+
+p4 input1 input6
+p4 input6
+
+tester:
+test 7 : return 0
+~cssc0155/Four/p4 < ~cs320/Data4/input11
+echo $status
+~cssc0155/Four/p4    ~cs320/Data4/input11
+echo $status
+~cssc0155/Four/p4 ~cs320/Data4/input5 ~cs320/Data4/input8
+echo $status
+p4 ~cs320/Data4/input5 ~cs320/Data4/input8
+echo $status
+test 10: return 4
+~cssc0155/Four/p4 /etc/shadow ~cs320/Data4/input5 /etc/nosuchfile
+echo $status
+test 11: return 0
+~cssc0155/Four/p4 /dev/null ~cs320/Data4/input2 /dev/null 
+echo $status
+test 12: return 7
+p4 < ~cs320/Data4/input6
+echo $status
+
+cp ~cs320/Data4/input6 ~/Four/input55
+p4 -o naw input55
+p4 input55 -o naw input1
+echo $status
+
+extra tester:
+Test 13: return 1
+~cssc0155/Four/p4 ~cs320/Data4/input5 -o myoutput13
+echo $status
+Test 14: return 0
+echo hello HELLO | ~cssc0155/Four/p4 -o myoutput14
+echo $status
+Test 15: return 3
+~cssc0155/Four/p4 -o 
+echo $status
+return 8
+echo hi | ~cssc0155/Four/p4 -o ~cs320/Data4/unwritable
+echo $status
+not return 3
+~echo hi | ~cssc0155/Four/p4 -o cs320/Data4/unwritable
+echo $status
+
+
+
+error checking:
+p4 -o
+p4 -o my_output < ~cs320/Data1/input1
+p4 -o myoutput < ~cs320/Data1/input1 ~cs320/Data1/input6
+
+p4 -o output1 input1 -o output2
+p4 -o output  input1 < input6
+p4 -o output < input1 input6
+p4 -o output2 <input6 input1
+p4 input1
+p4 input1 -o
+p4 input1 -o outfile1
+p4 input1 -o outfile1 -o
+p4 input1 -o outfile1 -o outfile2
+p4 input1 -o outfile1 input6
+p4 input1 -o outfile1 input6 -o 
+p4 input1 -o outfile1 input6 -o outfile2
+p4 input1 -o outfile1 input6 -o outfile2 input5
+p4 input1 -o outfile1 input6 -o outfile2 input5 input1
+p4 input1 -o outfile1 input6 -o outfile2 input5 input1 input6
+
+p4 input6 -o
+p4 input1 input6 input5 -o
+p4 input1 input6 input5
+
+p4 input6 -o my_output input1
+p4 input1 -o fileout1 input2 -o fileout2
+p4 input1 -o fileout1 -o fileout2
+
+ ~masc0000/CbyDiscovery/ch2/inout2.c 
+
+ if there is any -o you are going to print out to it:
+	do a loop looking for arg .
+
+if there is only 1 arg:
+FILE* mystream = stdin; 
+ 
+for -o:
+ FILE* mystream= stdout;
+ if( there is -0 occurs, well open)
+	the outputfile and save pointer to mystream.
+ putchar(iochar)
+ putc(iochar,mystream);
+ 
+
+ 
+cp ~masc0000/CbyDiscovery/ch10
+cp -R ~masc0000/CbyDiscovery/ch1 ~/Four/test/
+cp -R ~masc0000/CbyDiscovery/ch2 ~/Four/test/
+cp -R ~masc0000/CbyDiscovery/ch3 ~/Four/test/
+cp -R ~masc0000/CbyDiscovery/ch4 ~/Four/test/
+cp -R ~masc0000/CbyDiscovery/ch5 ~/Four/test/
+cp -R ~masc0000/CbyDiscovery/ch6 ~/Four/test/
+cp -R ~masc0000/CbyDiscovery/ch7 ~/Four/test/
+cp -R ~masc0000/CbyDiscovery/ch8 ~/Four/test/
+cp -R ~masc0000/CbyDiscovery/ch9 ~/Four/test/
+cp -R ~masc0000/CbyDiscovery/ch12 ~/Four/test/
+cp -R ~masc0000/CbyDiscovery/ch10 ~/Four/test/
+cp -R ~masc0000/CbyDiscovery/ch11 ~/Four/test/
+
+break; //go just beyone the end of the loop
+continue; //go to the top of the loop

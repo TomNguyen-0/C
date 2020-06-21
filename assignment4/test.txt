@@ -1,0 +1,68 @@
+scriptp1 < ~cs320/Data1/input1 >! a4out1
+scriptp1 < ~cs320/Data1/input2 >! a4out2
+scriptp1 < ~cs320/Data1/input3 >! a4out3
+scriptp1 < ~cs320/Data1/input4 >! a4out4
+scriptp1 < ~cs320/Data1/input5 >! a4out5
+scriptp1 < ~cs320/Data1/input11 >! a4out11
+~/One/p1 < ~cs320/Data1/input1 >! p1out1
+~/One/p1 < ~cs320/Data1/input2 >! p1out2
+~/One/p1 < ~cs320/Data1/input3 >! p1out3
+~/One/p1 < ~cs320/Data1/input4 >! p1out4
+~/One/p1 < ~cs320/Data1/input5 >! p1out5
+~/One/p1 < ~cs320/Data1/input11 >! p1out11
+test1 < ~cs320/Data1/input1 >! test1out1
+test1 < ~cs320/Data1/input2 >! test1out2
+test1 < ~cs320/Data1/input3 >! test1out3
+test1 < ~cs320/Data1/input4 >! test1out4
+test1 < ~cs320/Data1/input5 >! test1out5
+test1 < ~cs320/Data1/input11 >! test1out11
+
+rm test1
+vi test1
+chmod 700 test1
+
+rm scriptp1
+vi scriptp1
+chmod 700 scriptp1
+
+diff -a p1out1 a4out1
+diff -a p1out2 a4out2
+diff -a p1out3 a4out3
+diff -a p1out4 a4out4
+diff -a p1out5 a4out5
+diff -a p1out11 a4out11
+
+diff -a p1out1 test1out1
+diff -a p1out2 test1out2
+diff -a p1out3 test1out3
+diff -a p1out4 test1out4
+diff -a p1out5 test1out5
+diff -a p1out11 testout11
+
+diff -a a4out1 test1out1
+diff -a a4out2 test1out2
+diff -a a4out3 test1out3
+diff -a a4out4 test1out4
+diff -a a4out5 test1out5
+diff -a a4out11 test1out11
+
+rm test1out1
+rm test1out2
+rm test1out3
+rm test1out4
+rm test1out5
+rm test1out11
+rm a4out1
+rm a4out2
+rm a4out3
+rm a4out4
+rm a4out5
+rm a4out11
+rm p1out1
+rm p1out2
+rm p1out3
+rm p1out4
+rm p1out5
+rm p1out11
+
+read -n1 -r -p "Press any key to continue..." key

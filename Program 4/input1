@@ -1,0 +1,6 @@
+This+file+has+data+for+P1.+To+'see'+the+special+characters,+display+it+with:
+cat	-vet	~cs320/Data1/input1
+Many+changes+will+be+made+to+web+URLs:
+google.COM/search?client=SuSE&q=AD.com:Some Pat_tern
+Delete+and+non-ascii+characters+occur+between+the+curly+brackets+below.
+{ş}

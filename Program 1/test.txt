@@ -1,0 +1,47 @@
+cd One
+gcc -o p1 p1.c
+p1 < input1
+cat -vt ~cs320/Data1/input1
+cat ~cs320/Data1/input1
+p1 < ~cs320/Data1/input1
+p1 < ~cs320/Data1/input2
+p1 < ~cs320/Data1/input3
+p1 < ~cs320/Data1/input4
+p1 < ~cs320/Data1/input5
+inout2 < ~cs320/Data1/input4 > input4
+
+rm output1
+p1 < ~cs320/Data1/input1 > output1
+diff answer output1
+
+gcc -o p1 p1.c
+rm output1
+rm output2
+rm output3
+rm output4
+rm output5
+rm output11
+
+gcc -o p1 p1.c
+p1 < ~cs320/Data1/input1 >! output1
+p1 < ~cs320/Data1/input2 >! output2
+p1 < ~cs320/Data1/input3 >! output3
+p1 < ~cs320/Data1/input4 >! output4
+p1 < ~cs320/Data1/input5 >! output5
+p1 < ~cs320/Data1/input5 >! output11
+
+new p1:
+gcc -o p1 p1.c
+~/One/p1 < ~cs320/Data1/input1 >! test1out1
+~/One/p1 < ~cs320/Data1/input2 >! test1out2
+~/One/p1 < ~cs320/Data1/input3 >! test1out3
+~/One/p1 < ~cs320/Data1/input4 >! test1out4
+~/One/p1 < ~cs320/Data1/input5 >! test1out5
+~/One/p1 < ~cs320/Data1/input11 >! test1out11
+ 
+diff -a output1 test1out1
+diff -a output2 test1out2
+diff -a output3 test1out3
+diff -a output4 test1out4
+diff -a output5 test1out5
+diff -a output11 test1out11
