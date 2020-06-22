@@ -1,0 +1,3 @@
+#!/bin/bash
+ rm /dev/shm/sem.5701173done
+ rm /dev/shm/sem.5701173mutx

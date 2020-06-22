@@ -1,0 +1,6 @@
+#!/bin/bash
+bash test
+rm p3helper.c
+nano p3helper.c
+make
+p3

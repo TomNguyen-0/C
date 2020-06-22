@@ -1,0 +1,50 @@
+// CS 570 - program 3
+// Name: Tom Nguyen
+// Professor: Dr. John Carroll
+// Username: cssc0062@edoras.sdsu.edu
+// April 06, 2018
+// File: p3.c
+
+I wrote this code myself with help from:
+	-cs 570 operating systems by John Carroll Spring 2018
+	
+I believe everything works perfectly under all conitions (except for below):
+	-exception: exiting a program before it finish running.
+		-problem: the files and semaphore are not properly removed.
+			will leave files: countfile, /dev/shm/sem.5701173done, and dev/shm/sem.5701173mutx
+	-exception: running commands to quickly back to back.
+		-problem: allowing some robots to start work before the first robot has initialized everything, and that's leading to deadlock.
+			-example: p3 5 666 4 4
+					  p3 3 555 2 3
+			 return: errno =2
+		-fix: locking down that area with semaphores. line 56
+	-exception: running p3 twice at the same time from the same user.
+		-problem: This will pull on the system and fight for resources.
+
+	
+explanation of how you achieved successful coorination:
+	-initialize counter to zero and open a semaphore
+	-every time we want to access the file use sem_wait to protect this critical region
+	-sem_wait to decide what we should do and increase counter every time we print
+	-special case (3):
+		1. counter = nrRobots*quota = total
+			when it is the final  widget print F and close out file,unlink,sem_close,sem_unlink.
+		2. counter%width==0
+			This is the last widget in the row.
+			print N and update file
+			release semaphore with sem_post
+		3. else
+			This is not the final widget or the last widget in the row
+			print widget pid.
+			update counter
+			release semaphore with sem_post
+	-I decided to use a common file to pass values between the processes because it is simple to do.
+	-my code makes it impossible for a robot to use printerger() because using sem_wait will make the robot wait before using printerger().
+	-cleanup strategy:
+		-the cleanup is only done when we reach the total=nrRobots*quota otherwise no cleanup is done.
+	
+additional information
+	-it is important to give the right permission to the semaphore or else the program will freeze up.
+	-The permissions i used was (O_RDWR|O_CREAT|O_EXCL,S_IRUSR|S_IWUSR)
+	-open a file called "countfile"
+

@@ -1,0 +1,31 @@
+I wrote this code myself. The main template for program 1 is from my program 0. I copied it over and th
+en modified it.
+Other sources that I may have used as inspirations:
+        -copied getword.c from ~cssc0062/One/getword.c
+	-soft linked getword.h and makefile from ~cssc0062/One/
+        -used CS570 Operating Systems (notebook) by Dr. John Carroll (Spring 2018).
+	-<ref 1> How to make a array of strings: https://www.cs.bu.edu/teaching/cpp/string/array-vs-ptr/
+	-<ref 2> How to put a string into an array: https://www.youtube.com/watch?v=pB-nvbCg3yc
+	-<ref 3> How to use malloc: https://stackoverflow.com/questions/7050798/incompatible-implicit-declaration-of-built-in-function-malloc
+	-<ref 4> How to print to screen without printing to file using fprintf(stderr, "message\n"): from my cs320 p4.c
+	-<ref 5> How to open a file : from my cs320 p4.c
+	-<ref 6> Used from notebook program 2 as a guide by Dr John Carroll.
+	-<ref 7> open code: http://pubs.opengroup.org/onlinepubs/7908799/xsh/open.html
+	-<ref 8> What is dup2():https://stackoverflow.com/questions/24538470/what-does-dup2-do-in-c
+	-<ref 9> what is S_IRWXU: http://pubs.opengroup.org/onlinepubs/7908799/xsh/sysstat.h.html
+	-<ref 10> what is fork():http://www.csl.mtu.edu/cs4411.ck/www/NOTES/process/fork/create.html
+	-<ref 10> How fork() works:http://www.csl.mtu.edu/cs4411.ck/www/NOTES/process/fork/create.html
+	-How unlink works: http://pubs.opengroup.org/onlinepubs/009695399/functions/unlink.html
+	-How link works: http://pubs.opengroup.org/onlinepubs/009695399/functions/link.html
+
+Bugs or shortcomings:
+        -bytes beginning at address char pointer will be overwritten.
+        -Anyone using this routine should have char pointer pointing to an
+          available area at least STORAGE bytes long before calling getword().
+
+side notes:
+        -I believe everything works perfectly under all conditions,
+		 except for:
+		 - when something that uses >>. exmaple 123 >> 1234
+		 - when something > &outfile. Unsure of how to handle this case.
+		 - lowercase mv will call mv from edoras not from p2.

@@ -1,0 +1,14 @@
+I wrote this code myself with help from:
+	-inout2.c (C by Discovery by Foster)(chapter 2).
+	-outline from cs570 Programming assignment Zero handout sheet(Dr. Carroll).
+	-used www.asciitable.com for conversions.
+	-ungetc() function: http://c-for-dummies.com/blog/?p=1710 .
+	-how to convert integer to char in C : https://stackoverflow.com/questions/2279379/how-to-convert-integer-to-char-in-c .
+	-get a single character from a char* in C : https://stackoverflow.com/questions/7040501/get-a-single-character-from-a-char-in-c .
+
+Bugs or shortcomings:
+	-the bytes at the beginnning of the input address will be overwritten and lost.
+
+Side notes:
+	-note that the array size for s[STORAGE] is 255 (defined in getword.h).
+	-note the for loop in p0.c is an infinite loop (for(;;)).

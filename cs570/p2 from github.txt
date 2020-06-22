@@ -1,0 +1,800 @@
+/*
+Author: Michael Dempsey
+Instructor: John Carroll
+Class: CS570-Operating Systems
+Description: p2.c parses the command line using getword.c and set appropriate flags based on the input.
+With the exeception of the built in commands all input lines are then sent to the executioner function
+or background executioner function  which handle the commands based on the set flags.
+*/
+
+#include <time.h>
+#include <errno.h>
+#include <sys/wait.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <strings.h>
+#include <stdio.h>
+#include "getword.h"
+#define MAXITEM 100
+#include "CHK.h"
+#include <dirent.h>
+#include <stddef.h>
+void executioner(char **execArray, char *ioArray, char *outArray, char **pipeArray);
+int backgroundExec(char **backArray, char *ioArray, char *outArray);
+void parse(char *t, char **ptrArray,char *ioArray, char *outArray, char **pipeArray);
+int isBackground = 0;
+int leftFlag = 0;
+int rightFlag = 0;
+int input_fd, output_fd;
+int k;
+int envFlag;
+int doublePipe;
+int flags;
+int appendFlag;
+int doubleLeft = 0;
+char ioArray[STORAGE];
+int error1 =0;
+int noInput =0;
+char *env;
+int pipeFlag = 0;
+int fildes[2];
+int c;
+pid_t first, pid, second;
+unsigned char fileType;
+
+
+
+/*************************Main()******************/
+
+main()
+{
+char s[STORAGE];
+char outArray[STORAGE];
+char *newargv[MAXITEM];
+char *pipeArray[MAXITEM];
+char *newArray[MAXITEM];
+int pid;
+int ch;
+DIR *dirp;
+struct dirent *entry;
+struct stat sb;
+
+
+for(;;)
+
+{
+
+printf("p2: ");
+ch = getchar();
+
+if(ch == '\n')
+   {
+   continue;
+   }
+
+else
+{
+ch = ungetc(ch,stdin);
+
+//resets flags
+
+isBackground=0;
+leftFlag =0;
+rightFlag = 0;
+doubleLeft = 0;
+error1 = 0;
+noInput =0;
+pipeFlag =0;
+appendFlag = 0;
+
+//Calls parse function to read in the command line
+parse(s, newargv, ioArray, outArray, pipeArray);
+
+
+//Handles error cases
+
+if(pipeFlag ==1 && (newargv[0] == NULL || newargv[k] == NULL))
+   {
+   perror("You are attempting to pipe without two executables");
+   continue;
+   }
+
+if(envFlag ==1)
+    {
+    envFlag = 0;
+    continue;
+    }
+
+if(doublePipe == 1)
+    {
+    doublePipe = 0;
+    perror("This shell is not designed to allow multiple pipes.");
+    continue;
+    }
+
+if(noInput ==1)
+    {
+    perror("You are trying to redirect input with out specifying a file.");
+    continue;
+    }
+
+if(doubleLeft ==1)
+    {
+    perror("You are assigning multiple files for input");
+    continue;
+    }
+
+if(leftFlag == 1 && newargv[0] == NULL) 
+    {
+    perror("You are assigning redirection without any executable.");
+    continue;
+    }
+
+if(rightFlag ==1 && newargv[0] == NULL) {
+    perror("You are assigning redirection without any executable.");
+    continue;
+    }
+
+if(error1 == 1) {
+    perror("You are Assigning redirection to a metacharacter.");
+    continue;
+    }
+
+
+//The built in commands.
+//They include ls, cd, ls-F, setenv and printenv
+
+/**********LS CODE**************/
+
+if(newargv[0]  != NULL){
+
+   if((strcmp(newargv[0], "ls-F") == 0))
+      {
+      if(newargv[1] == NULL)
+           {
+           dirp = opendir(".");
+           if(lstat(".", &sb) == -1)
+                {
+                perror("stat ls-F");
+                }
+      }
+
+else if(newargv[1] != NULL && newargv[2] == NULL)
+      {
+
+      int t = chdir(newargv[1]);
+      if(t == -1)
+         {
+         printf("error in ls-f");
+         }
+      dirp = opendir(newargv[1]);
+      if(dirp==NULL)
+         {
+         perror("The Directory you requested is not readable\n");
+         }
+
+      if(lstat(".", &sb) == -1)
+         {
+         perror("stat ls-f");
+         }
+      }
+
+while(dirp)
+{
+
+if((entry=readdir(dirp)) != NULL)
+   {
+   int y = lstat((entry -> d_name), &sb);
+   if(y == -1)
+      {
+      perror("error ls-f");
+      }
+
+   if((sb.st_mode & S_IFMT)  == S_IFDIR)
+      {
+      printf("%s/\n", entry -> d_name);
+      }
+                                
+   else if(((sb.st_mode & S_IFMT) == S_IFREG) && sb.st_mode & 0111)
+      {
+      printf("%s*\n", entry -> d_name);
+      }
+
+   else if((sb.st_mode & S_IFMT) == S_IFLNK)
+      {
+      if(stat(entry -> d_name, &sb) ==-1)
+         {
+         printf("%s&\n", entry -> d_name);
+         }
+      
+      else
+         {
+         printf("%s@\n", entry -> d_name);
+         }
+   }
+
+else 
+   {
+   printf("%s\n", entry -> d_name);
+   }
+
+}
+
+else
+   {
+   closedir(dirp);
+   break;
+   }
+}
+
+continue;
+}
+
+if(strcmp(newargv[0], "ls")==0)
+   {
+   if(newargv[1]==NULL)
+      {
+      dirp = opendir(".");
+      }
+
+   if(newargv[1] != NULL && newargv[2] != NULL)
+      {
+      perror("ls is designed to handle only one argument.");
+      continue;
+      }
+
+   if(newargv[2]==NULL && newargv[1] != NULL)
+      {
+
+      if(stat(newargv[1], &sb) == -1) 
+         {
+         perror("The directory does not exist");
+         continue;          
+         }
+
+      if(stat(newargv[1], &sb) == 0)
+         {
+         if(sb.st_mode & S_IFREG)
+            {
+            printf("%s\n", newargv[1]);
+            continue;
+            }
+         }
+
+
+dirp = opendir(newargv[1]);
+   }
+
+while(dirp)
+   {
+   if((entry=readdir(dirp)) != NULL)
+      {
+      printf("%s\n", entry -> d_name);
+      }
+   else
+      {
+      closedir(dirp);
+      break;
+      }
+   }
+
+continue;
+}
+}
+
+
+/***********************PRINTENV CODE ***********************/
+
+if(strcmp(newargv[0], "printenv") == 0)
+   {
+   if(newargv[1] != NULL && newargv[2] != NULL)
+      {
+      perror("Printenv is only designed to accept one arguement");
+      }
+        
+   if(newargv[1] != NULL && newargv[2] == NULL)
+      {
+      char *environment = getenv(newargv[1]);
+      if(environment == NULL)
+         {
+         printf("\n");
+         continue;
+         }
+                
+      printf("%s\n", environment);
+      }
+      continue;
+   }
+
+
+/**********************SETENV CODE **************************/
+
+if(strcmp(newargv[0], "setenv") == 0)
+   {
+   if(newargv[1] != NULL && newargv[2] != NULL && newargv[3] == NULL)
+      {
+      int q = setenv( newargv[1], newargv[2], 1);
+      if (q == -1)
+         {
+         perror("Set environment failed");
+         }
+
+      }
+   else
+   {
+   perror("Incorrect number of arguements");
+   }
+
+continue;
+}
+
+
+/***********CD CODE************/
+
+if(newargv[0]  != NULL){
+   if(strcmp(newargv[0], "cd") == 0)
+      {
+         if(newargv[1] == NULL)
+            {
+            char *goHome = getenv("HOME");
+            int x = chdir(goHome);
+            if(x ==0)
+               {
+               continue;
+               }
+            else
+               {
+               perror("Could not change to requested Directory.");
+               continue;
+               }
+      }
+
+if(newargv[2] == NULL && newargv[1] != NULL)
+   {
+   int r =chdir(newargv[1]);
+   
+   if(r==0)
+      {
+      continue;
+      }
+   
+   else
+      {
+      perror("Could not change to requested Directory.");
+      continue;
+      }
+   }
+
+else
+   {
+   perror("cd is designed to only accept 0 or 1 arguments.");
+   continue;
+   }
+
+}
+
+}
+
+if (isBackground == 1)
+   {
+   pid = backgroundExec(newargv, ioArray, outArray);
+   printf("%s [%d]\n", newargv[0], pid);
+   fflush(NULL);
+   continue;
+   }
+
+if(appendFlag == 1)
+   {
+   if(stat(outArray, &sb) != 0)
+      {
+      printf("The File you are trying to append to does not exist\n");
+      }
+
+   }
+
+if(rightFlag == 1)
+   {
+   if (stat(outArray, &sb) != -1)
+      {
+      perror("The File already Exists.");
+      continue;
+      }
+
+   }
+
+
+if(isBackground == 1)
+   {
+   continue;
+   }
+
+executioner(newargv, ioArray, outArray, pipeArray);
+wait(NULL);
+fflush(NULL);
+}
+}
+}
+
+
+//The parse function works closely with the logic of getword to interpret the input provided by the user
+//All flags are set within the parse function
+
+
+/*********************Parse function*********************/
+
+void parse(char *t,char **ptrArray, char *io, char *out, char **pipeArray)
+{
+int j=0;
+int i;
+ptrArray[0] = t ;
+int x;
+
+/***********************Begin Parsing ********************/
+
+for(;;)
+{
+c = getword(t);
+
+if(*t == '$')
+   {
+   env =getenv((t+1));
+   if(env == NULL)
+      {
+      perror("Undefined Variable");
+      envFlag = 1;
+      return;
+      }
+   else
+      ptrArray[j] = env;
+   }
+}
+
+if(c ==-1)
+   {
+   printf("p2 terminated.\n");
+   exit(0);
+   }
+
+if(c ==0)
+   {
+   ptrArray[j]= NULL;
+   return;
+   }
+
+if(c==2)
+   {
+   if(*t == '>')
+      {
+      ptrArray[j] = NULL;
+      x = getword(out);
+      appendFlag = 1;
+      continue;
+      }
+   }
+
+if(c ==1)
+   {
+   if(*t =='&')
+      {
+      ptrArray[j]=NULL;
+      isBackground = 1;
+      return;
+      }
+
+   if(*t == '|')
+      {
+      if(pipeFlag == 1)
+         {
+         doublePipe = 1;
+         }
+      ptrArray[j] = NULL;
+      pipeFlag = 1;
+      t=t+20;
+      j=j+5;
+      k = j;
+      ptrArray[j]  =t;
+      continue;
+      }
+      
+   if(*t == '<')
+      {
+      if(leftFlag ==1) 
+         {
+         doubleLeft =1;
+         }
+      leftFlag = 1;
+      x = getword(io);
+
+   if(x ==0)
+      {
+      noInput = 1;
+      return;
+      }
+   continue;
+   }
+   
+   if(*t == '>')
+      {
+      rightFlag = 1;
+      x = getword(out);
+      if(x ==1)
+         {
+         if(out[0] =='&')
+            {
+            error1 = 1;
+            }
+         }
+      continue;
+      }
+
+}
+
+t = t  + c +1;
+j++;
+ptrArray[j] = t;
+
+}
+}
+
+
+
+/********************BackgroundExec() Function*********/
+/*Background exec functions just like executioner except it prints the pid of the function that is running in the background.
+In the event of a backgrounded pipeline the pid of the second child is printed
+*/
+
+int backgroundExec(char **ptrArray, char *ioArray, char *outArray)
+{
+flags = O_CREAT | O_RDWR;
+int kidpid;
+int returnPid;
+
+if(pipeFlag == 1)
+   {
+   pipe(fildes);
+   }
+
+fflush(stdout);
+kidpid = fork();
+
+if(kidpid == -1)
+   {
+   perror("Cannot Fork");
+   }
+
+if(kidpid == 0)
+   {
+
+   if(leftFlag == 1)
+      {
+      input_fd = open(ioArray, O_RDONLY);
+      dup2(input_fd, STDIN_FILENO);
+      leftFlag = 0;
+      close(input_fd);
+      }
+   
+   if(rightFlag == 1)
+      {
+      output_fd = open(outArray,flags, 0400 | 0200);
+      dup2(output_fd, STDOUT_FILENO);
+      rightFlag = 0;
+      close(output_fd);
+      }
+   
+   if(pipeFlag == 1)
+      {
+      dup2(fildes[1], STDOUT_FILENO);
+      close(fildes[0]);
+      close(fildes[1]);
+      }
+
+   if (execvp(ptrArray[0], ptrArray) <0)
+      {
+      perror("execvp failed");
+      }
+   }
+
+if(pipeFlag == 1)
+   {
+   fflush(stdout);
+   second = fork();
+   
+   if(second == -1)
+      {
+      printf("Pipe Failed to Fork");
+      return;
+      }
+
+   if(second == 0)
+      {
+      if(appendFlag == 1)
+        {
+        output_fd = open(outArray,flags);
+        lseek(output_fd, 0, SEEK_END);
+        dup2(output_fd, STDOUT_FILENO);
+        appendFlag= 0;
+        close(output_fd);
+        }
+
+      if(rightFlag ==1)
+        {
+        output_fd = open(outArray, flags, 0400 | 0200);
+        dup2(output_fd, STDOUT_FILENO);
+        rightFlag = 0;
+        close(input_fd);
+        }
+
+   if(leftFlag ==1)
+      {
+      input_fd = open(ioArray, O_RDONLY);
+      dup2(input_fd, STDIN_FILENO);
+      leftFlag = 0;
+      close(input_fd);
+      }
+
+   dup2(fildes[0], STDIN_FILENO);
+   close(fildes[0]);
+   close(fildes[1]);
+   int x = execvp(ptrArray[k], ptrArray+k);
+   if(x==-1)
+      {
+      printf("Second Child Failed to Exec");
+      }
+
+   }
+}
+
+close(fildes[0]);
+close(fildes[1]);
+
+if(pipeFlag ==1)
+   {
+   return second;
+   }
+
+return kidpid;
+
+
+}
+
+
+/******************Executioner()  Function ******************/
+//Executioner reacts to all set flags and executes accordingly
+void executioner(char **execArray, char *ioArray, char *outArray,char **pipeArray)
+{
+int pid2;
+int r;
+flags = O_CREAT | O_RDWR;
+pipe(fildes);
+fflush(stdout);
+pid2 = fork();
+
+if(pid2 == -1)
+   {
+   perror("Cannot Fork");
+   }
+
+if(pid2 ==0)
+   {
+   if(appendFlag == 1)
+      {
+      output_fd = open(outArray, flags);
+      lseek(output_fd, 0, SEEK_END);
+      dup2(output_fd, STDOUT_FILENO);
+      appendFlag = 0;
+      close(output_fd);
+      }
+
+   if(rightFlag ==1)
+      {
+      output_fd = open(outArray,flags, 0400 | 0200);
+      dup2(output_fd, STDOUT_FILENO);
+      rightFlag = 0;
+      close(output_fd);
+      }
+
+   if(leftFlag ==1) 
+      {
+      input_fd = open(ioArray, O_RDONLY);
+      dup2(input_fd, STDIN_FILENO);
+      leftFlag = 0;
+      close(input_fd);
+      }
+
+   if(pipeFlag == 1)
+      {
+      dup2(fildes[1], STDOUT_FILENO);
+      close(fildes[0]);
+      close(fildes[1]);
+      }
+   
+   int r = execvp(execArray[0],execArray);
+   if (r== -1)
+      {
+      perror("Exec Failed");
+      }
+   else
+      {
+      printf("Unknown Command: %s\n", execArray[0]);
+      }
+   }
+
+   if (pipeFlag == 1)
+      {
+      fflush(stdout);
+      second = fork();
+      if(second == -1)
+         {
+         printf("Pipe failed to fork");
+         return;
+         }
+                
+      if(second == 0)
+         {
+
+         if(appendFlag ==1)
+            {
+            output_fd = open(outArray,flags);
+            lseek(output_fd, 0, SEEK_END);
+            dup2(output_fd, STDOUT_FILENO);
+            appendFlag = 0;
+            close(output_fd);
+            }
+
+         if(rightFlag == 1)
+            {
+            output_fd = open(outArray, flags, 0400 | 0200);
+            dup2(output_fd, STDOUT_FILENO);
+            rightFlag = 0;
+            close(input_fd);
+            }
+         if(leftFlag == 1)
+            {
+            input_fd = open(ioArray, O_RDONLY);
+            dup2(input_fd,STDIN_FILENO);
+            leftFlag = 0;
+            close(input_fd);
+            }
+
+         dup2(fildes[0], STDIN_FILENO);
+         close(fildes[0]);
+         close(fildes[1]);
+         int x = execvp(execArray[k], execArray+k);
+         if(x == -1)
+            {
+            printf("Second Child Failed to Exec");
+            }
+
+
+         }
+
+      }
+
+close(fildes[0]);
+close(fildes[1]);
+
+if(pipeFlag == 1)
+   {
+   if(isBackground== 1)
+      {
+      return;
+      }
+   else
+      {
+      for(;;)
+      {
+      pid_t  pid;
+      pid = wait(NULL);
+      if (pid == second)
+        {
+        break;
+        }
+      }
+   }
+}
+return;
+}
