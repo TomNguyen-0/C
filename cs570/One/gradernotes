@@ -1,0 +1,12 @@
+I wrote this code myself. The main template for program 1 is from my program 0. I copied it over and then modified it.
+Other sources that I may have used as inspirations:
+	-copied getword.c from ~cssc0062/Zer0/getword.c
+	-used CS570 Operating Systems (notebook) by Dr. John Carroll (Spring 2018).
+
+Bugs or shortcomings:
+	-bytes beginning at address char pointer will be overwritten.
+	-Anyone using this routine should have char pointer pointing to an
+	  available area at least STORAGE bytes long before calling getword().
+
+side notes:
+	-I believe everything works perfectly under all conditions

@@ -1,0 +1,9 @@
+p0 < ~cs570/Data0/input1 >! ~/Zero/test/output1
+p0 < ~cs570/Data0/input2 >! ~/Zero/test/output2
+p0 < ~cs570/Data0/input3 >! ~/Zero/test/output3
+p0 < ~cs570/Data0/input4 >! ~/Zero/test/output4
+
+diff -a ~/Zero/test/solution1 ~/Zero/test/output1
+diff -a ~/Zero/test/solution2 ~/Zero/test/output2
+diff -a ~/Zero/test/solution3 ~/Zero/test/output3
+diff -a ~/Zero/test/solution4 ~/Zero/test/output4

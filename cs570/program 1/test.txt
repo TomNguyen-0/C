@@ -1,0 +1,30 @@
+p1 < ~cs570/Data0/input1 >! ~/One/test/output1
+p1 < ~cs570/Data0/input2 >! ~/One/test/output2
+p1 < ~cs570/Data0/input3 >! ~/One/test/output3
+p1 < ~cs570/Data0/input4 >! ~/One/test/output4
+p1 < ~/One/test/input1 >! ~/One/test/output5
+p1 < ~/One/test/input2 >! ~/One/test/output6
+p1 < ~/One/test/input2.1>! ~/One/test/output7
+p1 < ~/One/test/input3 >! ~/One/test/output8
+p1 < ~cs570/Data1/input6 >! ~/One/test/output9
+p1 < ~cs570/Data1/input5 >! ~/One/test/output10
+p1 < ~cs570/Data1/input7 >! ~/One/test/output11
+
+
+diff -a ~/Zero/test/solution1 ~/One/test/output1
+diff -a ~/Zero/test/solution2 ~/One/test/output2
+diff -a ~/Zero/test/solution3 ~/One/test/output3
+diff -a ~/Zero/test/solution4 ~/One/test/output4
+diff -a ~/One/test/solution5 ~/One/test/output5
+diff -a ~/One/test/solution6 ~/One/test/output6
+diff -a ~/One/test/solution7 ~/One/test/output7
+diff -a ~/One/test/solution8 ~/One/test/output8
+diff -a ~/One/test/solution9 ~/One/test/output9
+diff -a ~/One/test/solution10 ~/One/test/output10
+diff -a ~/One/test/solution11 ~/One/test/output11
+
+n=4, s=[Null]
+n=-1, s=[&]
+n=4, s=[void]
+n=-10, s=[]
+n=0, s=[]
